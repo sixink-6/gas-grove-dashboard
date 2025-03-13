@@ -3,14 +3,13 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Home,
-  BarChart,
-  Settings,
   Bell,
+  Settings,
   User,
-  Gauge,
-  Map,
-  List,
-  History,
+  CreditCard,
+  FileText,
+  Activity,
+  BarChart,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
@@ -31,19 +30,16 @@ export const Sidebar = () => {
     setCollapsed(!collapsed);
   };
 
-  const mainMenuItems: SidebarItem[] = [
-    { label: 'Dashboard', icon: Home, path: '/', active: true },
-    { label: 'Analytics', icon: BarChart, path: '/analytics' },
-    { label: 'Monitoring', icon: Gauge, path: '/monitoring' },
-    { label: 'Map View', icon: Map, path: '/map-view' },
-    { label: 'History', icon: History, path: '/history' },
-    { label: 'Reports', icon: List, path: '/reports' },
-  ];
+  // Get current path to determine active menu item
+  const currentPath = window.location.pathname;
 
-  const secondaryMenuItems: SidebarItem[] = [
-    { label: 'Alerts', icon: Bell, path: '/alerts' },
-    { label: 'Settings', icon: Settings, path: '/settings' },
-    { label: 'Account', icon: User, path: '/account' },
+  const mainMenuItems: SidebarItem[] = [
+    { label: 'Dashboard', icon: Home, path: '/', active: currentPath === '/' },
+    { label: 'Alerting', icon: Bell, path: '/alerting', active: currentPath === '/alerting' },
+    { label: 'Monitoring', icon: Activity, path: '/monitoring', active: currentPath === '/monitoring' },
+    { label: 'Reporting', icon: FileText, path: '/reporting', active: currentPath === '/reporting' },
+    { label: 'Payment & Billing', icon: CreditCard, path: '/billing', active: currentPath === '/billing' },
+    { label: 'Settings', icon: Settings, path: '/settings', active: currentPath === '/settings' },
   ];
 
   const renderMenuItem = (item: SidebarItem) => (
@@ -99,13 +95,6 @@ export const Sidebar = () => {
 
       <div className="flex-1 overflow-y-auto py-4 px-3">
         <nav className="space-y-1">{mainMenuItems.map(renderMenuItem)}</nav>
-
-        <div className="mt-8 pt-4 border-t border-gas-neutral-100 dark:border-gas-neutral-800">
-          <p className={cn("px-3 mb-2 text-xs uppercase text-gas-neutral-500", collapsed && "sr-only")}>
-            System
-          </p>
-          <nav className="space-y-1">{secondaryMenuItems.map(renderMenuItem)}</nav>
-        </div>
       </div>
 
       <div className="p-4 border-t border-gas-neutral-100 dark:border-gas-neutral-800">
