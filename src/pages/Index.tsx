@@ -2,12 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
-import DashboardOverview from '@/components/dashboard/DashboardOverview';
+import MonitoringDashboard from '@/components/monitoring/MonitoringDashboard';
 import GlassMorphism from '@/components/ui/GlassMorphism';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Index = () => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const isMobile = useIsMobile();
 
   // Simulate loading state
   useEffect(() => {
@@ -40,20 +41,15 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-gas-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
       <Sidebar />
       
-      <div 
-        className={`transition-all duration-300 ease-in-out ${
-          sidebarCollapsed ? "pl-16" : "pl-64"
-        }`}
-      >
+      <div className={`transition-all duration-300 ease-in-out ${isMobile ? 'pl-0' : 'pl-64'}`}>
         <Header 
           title="Gas Monitoring Dashboard" 
-          subtitle="Real-time monitoring and analytics"
-          sidebarCollapsed={sidebarCollapsed}
+          subtitle="Track gas distribution and client usage"
         />
         
-        <main className="container mx-auto p-4 animate-fade-in">
-          <GlassMorphism intensity="light" className="p-6 rounded-xl">
-            <DashboardOverview />
+        <main className="container mx-auto p-2 sm:p-4 animate-fade-in">
+          <GlassMorphism intensity="light" className="p-3 sm:p-6 rounded-xl">
+            <MonitoringDashboard />
           </GlassMorphism>
         </main>
       </div>

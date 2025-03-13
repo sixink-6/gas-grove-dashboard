@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -8,7 +7,6 @@ import {
   User,
   CreditCard,
   FileText,
-  Activity,
   Menu,
   X,
   ChevronLeft,
@@ -51,7 +49,6 @@ export const Sidebar = () => {
   const mainMenuItems: SidebarItem[] = [
     { label: 'Dashboard', icon: Home, path: '/', active: currentPath === '/' },
     { label: 'Alerting', icon: Bell, path: '/alerting', active: currentPath === '/alerting' },
-    { label: 'Monitoring', icon: Activity, path: '/monitoring', active: currentPath === '/monitoring' },
     { label: 'Reporting', icon: FileText, path: '/reporting', active: currentPath === '/reporting' },
     { label: 'Payment & Billing', icon: CreditCard, path: '/billing', active: currentPath === '/billing' },
     { label: 'Settings', icon: Settings, path: '/settings', active: currentPath === '/settings' },
