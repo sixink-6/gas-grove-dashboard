@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { MapPin, Thermometer, Gauge, CreditCard, AlertTriangle, BarChart } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import GasMetricCard from '../dashboard/GasMetricCard';
 import ChartComponent from '../dashboard/ChartComponent';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,14 +34,16 @@ interface ClientOverviewProps {
 }
 
 const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) => {
+  const isMobile = useIsMobile();
+  
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Client header and meter info */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle>{client.name}</CardTitle>
-          <CardDescription className="flex items-center gap-2">
-            <MapPin size={16} className="text-gas-neutral-500" />
+          <CardTitle className="text-base sm:text-lg">{client.name}</CardTitle>
+          <CardDescription className="flex items-center gap-2 text-xs sm:text-sm">
+            <MapPin size={isMobile ? 14 : 16} className="text-gas-neutral-500" />
             {client.location}
           </CardDescription>
         </CardHeader>
@@ -48,11 +51,11 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
           <div className="flex flex-col sm:flex-row justify-between gap-4">
             <div>
               <span className="text-xs text-gas-neutral-500">Meter ID</span>
-              <p className="font-mono text-sm">{client.meterId}</p>
+              <p className="font-mono text-xs sm:text-sm">{client.meterId}</p>
             </div>
             <div>
               <span className="text-xs text-gas-neutral-500">Alerts</span>
-              <p className={`font-medium ${client.alerts > 0 ? 'text-gas-red-500' : 'text-gas-green-500'}`}>
+              <p className={`font-medium text-xs sm:text-sm ${client.alerts > 0 ? 'text-gas-red-500' : 'text-gas-green-500'}`}>
                 {client.alerts > 0 ? `${client.alerts} active` : 'None'}
               </p>
             </div>
@@ -61,12 +64,12 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
       </Card>
 
       {/* Consumption and Billing */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         <GasMetricCard
           title="Gas Consumption"
           value={client.consumption[timeRange]}
           unit="m³"
-          icon={<BarChart size={40} />}
+          icon={<BarChart size={isMobile ? 32 : 40} />}
           subtitle={`${timeRange} usage`}
           status="normal"
           importance="primary"
@@ -76,7 +79,7 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
           title="Gas Temperature"
           value={client.temperature.current}
           unit="°C"
-          icon={<Thermometer size={40} />}
+          icon={<Thermometer size={isMobile ? 32 : 40} />}
           trend="neutral"
           trendValue="Stable"
           status="normal"
@@ -87,7 +90,7 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
           title="Gas Pressure"
           value={client.pressure.current}
           unit="hPa"
-          icon={<Gauge size={40} />}
+          icon={<Gauge size={isMobile ? 32 : 40} />}
           trend="neutral"
           trendValue="Normal range"
           status="normal"
@@ -97,14 +100,14 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
       </div>
 
       {/* Charts for Temperature and Pressure */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <ChartComponent
           type="line"
           data={client.temperature.history}
           dataKey="value"
           strokeColor="#FF6666"
           fillColor="#FFF0F0"
-          height={250}
+          height={isMobile ? 200 : 250}
           title="Temperature Monitoring"
           subtitle="24-hour trend"
           yAxisFormatter={(value) => `${value}°C`}
@@ -116,7 +119,7 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
           dataKey="value"
           strokeColor="#9CA3AF"
           fillColor="#F9FAFB"
-          height={250}
+          height={isMobile ? 200 : 250}
           title="Pressure Monitoring"
           subtitle="24-hour trend"
           yAxisFormatter={(value) => `${value} hPa`}
@@ -125,11 +128,11 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
       </div>
 
       {/* Billing and Alerts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <GasMetricCard
           title="Current Billing"
           value={`$${client.billing.toLocaleString()}`}
-          icon={<CreditCard size={40} />}
+          icon={<CreditCard size={isMobile ? 32 : 40} />}
           subtitle={`Based on ${timeRange} consumption`}
           importance="secondary"
           animationDelay={400}
@@ -137,7 +140,7 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
         <GasMetricCard
           title="Anomaly Alerts"
           value={client.alerts}
-          icon={<AlertTriangle size={40} />}
+          icon={<AlertTriangle size={isMobile ? 32 : 40} />}
           subtitle={client.alerts > 0 ? "Attention required" : "System normal"}
           status={client.alerts > 0 ? "warning" : "normal"}
           importance="secondary"

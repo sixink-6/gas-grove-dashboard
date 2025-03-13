@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Home,
@@ -9,12 +9,14 @@ import {
   CreditCard,
   FileText,
   Activity,
-  BarChart,
+  Menu,
+  X,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import GlassMorphism from '../ui/GlassMorphism';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type SidebarItem = {
   label: string;
@@ -25,10 +27,23 @@ type SidebarItem = {
 
 export const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
   };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  // Close mobile menu when screen resizes to desktop
+  useEffect(() => {
+    if (!isMobile && mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
+  }, [isMobile, mobileMenuOpen]);
 
   // Get current path to determine active menu item
   const currentPath = window.location.pathname;
@@ -53,12 +68,79 @@ export const Sidebar = () => {
           ? 'bg-gas-blue-100 text-gas-blue-700 dark:bg-gas-blue-900/30 dark:text-gas-blue-400'
           : 'text-gas-neutral-700 dark:text-gas-neutral-300'
       )}
+      onClick={() => isMobile && setMobileMenuOpen(false)}
     >
       <item.icon size={20} />
-      {!collapsed && <span>{item.label}</span>}
+      {(!collapsed || isMobile) && <span>{item.label}</span>}
     </Link>
   );
 
+  // Mobile hamburger menu button
+  const mobileMenuButton = isMobile && (
+    <button 
+      onClick={toggleMobileMenu}
+      className="fixed top-4 right-4 z-50 p-2 rounded-full bg-gas-blue-500 text-white shadow-lg"
+    >
+      {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+    </button>
+  );
+
+  // Mobile sidebar
+  if (isMobile) {
+    return (
+      <>
+        {mobileMenuButton}
+        
+        {/* Mobile sidebar that slides in from left */}
+        <div 
+          className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ${
+            mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+          onClick={toggleMobileMenu}
+        ></div>
+        
+        <GlassMorphism
+          intensity="medium"
+          className={`fixed top-0 left-0 z-40 h-screen w-64 transition-transform duration-300 ease-in-out border-r border-gas-neutral-100 dark:border-gas-neutral-800 ${
+            mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          <div className="flex items-center justify-between p-4 border-b border-gas-neutral-100 dark:border-gas-neutral-800">
+            <Link to="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+              <div className="h-8 w-8 bg-gas-blue-500 text-white rounded-md flex items-center justify-center font-semibold">
+                GM
+              </div>
+              <span className="font-semibold text-gas-neutral-900 dark:text-white">
+                Gas Monitor
+              </span>
+            </Link>
+          </div>
+
+          <div className="flex-1 overflow-y-auto py-4 px-3">
+            <nav className="space-y-1">{mainMenuItems.map(renderMenuItem)}</nav>
+          </div>
+
+          <div className="p-4 border-t border-gas-neutral-100 dark:border-gas-neutral-800">
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-full bg-gas-neutral-200 dark:bg-gas-neutral-700 flex items-center justify-center">
+                <User size={16} className="text-gas-neutral-600 dark:text-gas-neutral-300" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gas-neutral-900 dark:text-white truncate">
+                  John Doe
+                </p>
+                <p className="text-xs text-gas-neutral-500 truncate">
+                  Administrator
+                </p>
+              </div>
+            </div>
+          </div>
+        </GlassMorphism>
+      </>
+    );
+  }
+
+  // Desktop sidebar
   return (
     <GlassMorphism
       intensity="medium"

@@ -12,6 +12,7 @@ import {
   BarChart,
   Filter
 } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import GasMetricCard from '../dashboard/GasMetricCard';
 import ChartComponent from '../dashboard/ChartComponent';
 import ClientOverview from './ClientOverview';
@@ -135,22 +136,23 @@ const clientsData = [
 const MonitoringDashboard = () => {
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+  const isMobile = useIsMobile();
   
   const clientData = selectedClient 
     ? clientsData.find(client => client.id === selectedClient) 
     : null;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Overall Information Section */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Overall Gas Distribution</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           <GasMetricCard
             title="Gas Tank Balance"
             value={overallData.tankBalance}
             unit="m³"
-            icon={<Gauge size={40} />}
+            icon={<Gauge size={isMobile ? 32 : 40} />}
             trend="down"
             trendValue="2.5% from yesterday"
             status="normal"
@@ -161,7 +163,7 @@ const MonitoringDashboard = () => {
             title="Total Gas Delivered"
             value={overallData.totalGasDelivered}
             unit="m³"
-            icon={<Truck size={40} />}
+            icon={<Truck size={isMobile ? 32 : 40} />}
             trend="up"
             trendValue="15% this month"
             status="normal"
@@ -171,7 +173,7 @@ const MonitoringDashboard = () => {
           <GasMetricCard
             title="Alert Count"
             value={overallData.alertCount}
-            icon={<AlertTriangle size={40} />}
+            icon={<AlertTriangle size={isMobile ? 32 : 40} />}
             trend="up"
             trendValue="1 new today"
             status={overallData.alertCount > 0 ? "warning" : "normal"}
@@ -182,10 +184,10 @@ const MonitoringDashboard = () => {
       </div>
 
       {/* Client Selection Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-2 border-b border-gas-neutral-200 dark:border-gas-neutral-700">
+      <div className="flex flex-col gap-4 pb-2 border-b border-gas-neutral-200 dark:border-gas-neutral-700">
         <h2 className="text-xl font-semibold">Client Gas Usage</h2>
         <div className="flex flex-col sm:flex-row gap-3">
-          <div className="w-64">
+          <div className="w-full sm:w-64">
             <Select onValueChange={(value) => setSelectedClient(value)} value={selectedClient || undefined}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select client" />
@@ -197,7 +199,7 @@ const MonitoringDashboard = () => {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button 
               onClick={() => setTimeRange('daily')} 
               className={`px-3 py-1 rounded-md text-sm ${timeRange === 'daily' 
@@ -230,8 +232,8 @@ const MonitoringDashboard = () => {
       {selectedClient ? (
         <ClientOverview client={clientData!} timeRange={timeRange} />
       ) : (
-        <div className="flex flex-col items-center justify-center py-12">
-          <Users size={64} className="text-gas-neutral-300 mb-4" />
+        <div className="flex flex-col items-center justify-center py-8 sm:py-12">
+          <Users size={isMobile ? 48 : 64} className="text-gas-neutral-300 mb-4" />
           <h3 className="text-xl font-medium text-gas-neutral-500 mb-2">Select a Client</h3>
           <p className="text-gas-neutral-400 text-center max-w-md">
             Choose a client from the dropdown above to view their gas usage data, monitoring information, and billing details.
