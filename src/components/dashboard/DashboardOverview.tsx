@@ -110,7 +110,7 @@ export const DashboardOverview = () => {
           title="Gas Level Trend"
           subtitle="Last 24 hours monitoring"
           className="animate-slide-up"
-          animationDelay="200ms"
+          style={{ animationDelay: '200ms' }}
           yAxisFormatter={(value) => `${value} ppm`}
         />
         <ChartComponent
@@ -123,7 +123,7 @@ export const DashboardOverview = () => {
           title="Temperature Trend"
           subtitle="Last 24 hours monitoring"
           className="animate-slide-up"
-          animationDelay="300ms"
+          style={{ animationDelay: '300ms' }}
           yAxisFormatter={(value) => `${value}°C`}
         />
       </div>
@@ -139,7 +139,7 @@ export const DashboardOverview = () => {
           title="Pressure Trend"
           subtitle="Last 24 hours monitoring"
           className="animate-slide-up"
-          animationDelay="400ms"
+          style={{ animationDelay: '400ms' }}
           yAxisFormatter={(value) => `${value} hPa`}
         />
         <ChartComponent
@@ -152,7 +152,7 @@ export const DashboardOverview = () => {
           title="Humidity Trend"
           subtitle="Last 24 hours monitoring"
           className="animate-slide-up"
-          animationDelay="500ms"
+          style={{ animationDelay: '500ms' }}
           yAxisFormatter={(value) => `${value}%`}
         />
       </div>

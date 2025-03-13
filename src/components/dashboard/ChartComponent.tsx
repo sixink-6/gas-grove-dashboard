@@ -30,6 +30,8 @@ interface ChartComponentProps {
   className?: string;
   showAnimations?: boolean;
   showGrid?: boolean;
+  animationDelay?: string | number;
+  style?: React.CSSProperties;
   yAxisFormatter?: (value: number) => string;
 }
 
@@ -45,8 +47,14 @@ export const ChartComponent = ({
   className,
   showAnimations = true,
   showGrid = true,
+  animationDelay,
+  style,
   yAxisFormatter,
 }: ChartComponentProps) => {
+  const mergedStyle = animationDelay
+    ? { ...style, animationDelay: typeof animationDelay === 'number' ? `${animationDelay}ms` : animationDelay, animationFillMode: 'forwards' }
+    : style;
+
   const renderChart = () => {
     const commonProps = {
       data,
@@ -161,6 +169,7 @@ export const ChartComponent = ({
     <GlassMorphism 
       intensity="light" 
       className={cn('p-4 rounded-xl overflow-hidden', className)}
+      style={mergedStyle}
     >
       {(title || subtitle) && (
         <div className="mb-4">
