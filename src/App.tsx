@@ -10,6 +10,7 @@ import Billing from "./pages/Billing";
 import Settings from "./pages/Settings";
 import RoleManagement from "./pages/RoleManagement";
 import UserManagement from "./pages/UserManagement";
+import Reporting from "./pages/Reporting";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/alerting" element={<Alerting />} />
           <Route path="/billing" element={<Billing />} />
+          <Route path="/reporting" element={<Reporting />} />
           <Route path="/settings" element={<Settings />}>
             <Route path="/settings" element={<RoleManagement />} />
             <Route path="/settings/role-management" element={<RoleManagement />} />
