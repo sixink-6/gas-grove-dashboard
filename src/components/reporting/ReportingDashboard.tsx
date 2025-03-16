@@ -166,10 +166,10 @@ const ReportingDashboard = () => {
         
         <Card>
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Clients</h3>
-            <p className="text-3xl font-bold">3</p>
+            <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Billing</h3>
+            <p className="text-3xl font-bold">$3,750</p>
             <p className="text-sm text-muted-foreground mt-2">
-              Active in this period
+              {format(dateRange.from, 'd MMM')} - {format(dateRange.to, 'd MMM yyyy')}
             </p>
           </CardContent>
         </Card>

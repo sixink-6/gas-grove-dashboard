@@ -7,6 +7,7 @@ import ChartComponent from '../dashboard/ChartComponent';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
+import { format } from 'date-fns';
 
 interface ClientData {
   id: string;
@@ -27,6 +28,10 @@ interface ClientData {
     history: Array<{ name: string; value: number }>;
   };
   billing: number;
+  billingPeriod?: {
+    from: Date;
+    to: Date;
+  };
   alerts: number;
 }
 
@@ -39,6 +44,14 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
   const isMobile = useIsMobile();
   const [tempChartOpen, setTempChartOpen] = useState(false);
   const [pressureChartOpen, setPressureChartOpen] = useState(false);
+  
+  // Default billing period if not provided
+  const billingPeriod = client.billingPeriod || {
+    from: new Date(new Date().setDate(1)), // First day of current month
+    to: new Date() // Today
+  };
+  
+  const formattedBillingPeriod = `${format(billingPeriod.from, 'd MMM')} - ${format(billingPeriod.to, 'd MMM yyyy')}`;
   
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -191,7 +204,7 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
           title="Current Billing"
           value={`$${client.billing.toLocaleString()}`}
           icon={<CreditCard size={isMobile ? 32 : 40} />}
-          subtitle={`Based on ${timeRange} consumption`}
+          subtitle={`Total from ${formattedBillingPeriod}`}
           importance="secondary"
           animationDelay={400}
         />
