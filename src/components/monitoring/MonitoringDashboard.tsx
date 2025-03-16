@@ -48,14 +48,14 @@ const clientsData = [
       ]
     },
     pressure: {
-      current: 1015,
+      current: 5.2,
       history: [
-        { name: '00:00', value: 1014 },
-        { name: '04:00', value: 1014 },
-        { name: '08:00', value: 1015 },
-        { name: '12:00', value: 1016 },
-        { name: '16:00', value: 1015 },
-        { name: '20:00', value: 1015 }
+        { name: '00:00', value: 5.1 },
+        { name: '04:00', value: 5.1 },
+        { name: '08:00', value: 5.2 },
+        { name: '12:00', value: 5.3 },
+        { name: '16:00', value: 5.2 },
+        { name: '20:00', value: 5.2 }
       ]
     },
     billing: 3750,
@@ -83,14 +83,14 @@ const clientsData = [
       ]
     },
     pressure: {
-      current: 1013,
+      current: 4.8,
       history: [
-        { name: '00:00', value: 1012 },
-        { name: '04:00', value: 1012 },
-        { name: '08:00', value: 1013 },
-        { name: '12:00', value: 1014 },
-        { name: '16:00', value: 1013 },
-        { name: '20:00', value: 1013 }
+        { name: '00:00', value: 4.7 },
+        { name: '04:00', value: 4.7 },
+        { name: '08:00', value: 4.8 },
+        { name: '12:00', value: 4.9 },
+        { name: '16:00', value: 4.8 },
+        { name: '20:00', value: 4.8 }
       ]
     },
     billing: 2610,
@@ -118,14 +118,14 @@ const clientsData = [
       ]
     },
     pressure: {
-      current: 1011,
+      current: 5.4,
       history: [
-        { name: '00:00', value: 1010 },
-        { name: '04:00', value: 1010 },
-        { name: '08:00', value: 1011 },
-        { name: '12:00', value: 1012 },
-        { name: '16:00', value: 1011 },
-        { name: '20:00', value: 1011 }
+        { name: '00:00', value: 5.3 },
+        { name: '04:00', value: 5.3 },
+        { name: '08:00', value: 5.4 },
+        { name: '12:00', value: 5.5 },
+        { name: '16:00', value: 5.4 },
+        { name: '20:00', value: 5.4 }
       ]
     },
     billing: 4350,

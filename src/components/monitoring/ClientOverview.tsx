@@ -154,7 +154,7 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
           <GasMetricCard
             title="Gas Pressure"
             value={client.pressure.current}
-            unit="hPa"
+            unit="Barg"
             icon={<Gauge size={isMobile ? 32 : 40} />}
             trend="neutral"
             trendValue="Normal range"
@@ -191,7 +191,7 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
               height={isMobile ? 180 : 220}
               title="Pressure Monitoring"
               subtitle="24-hour trend"
-              yAxisFormatter={(value) => `${value} hPa`}
+              yAxisFormatter={(value) => `${value} Barg`}
               showAnimations={true}
             />
           </CollapsibleContent>
