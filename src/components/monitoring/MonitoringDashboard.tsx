@@ -144,46 +144,7 @@ const MonitoringDashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Overall Information Section */}
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Overall Gas Distribution</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-          <GasMetricCard
-            title="Gas Tank Balance"
-            value={overallData.tankBalance}
-            unit="m³"
-            icon={<Gauge size={isMobile ? 32 : 40} />}
-            trend="down"
-            trendValue="2.5% from yesterday"
-            status="normal"
-            importance="primary"
-            animationDelay={100}
-          />
-          <GasMetricCard
-            title="Total Gas Delivered"
-            value={overallData.totalGasDelivered}
-            unit="m³"
-            icon={<Truck size={isMobile ? 32 : 40} />}
-            trend="up"
-            trendValue="15% this month"
-            status="normal"
-            importance="primary"
-            animationDelay={200}
-          />
-          <GasMetricCard
-            title="Alert Count"
-            value={overallData.alertCount}
-            icon={<AlertTriangle size={isMobile ? 32 : 40} />}
-            trend="up"
-            trendValue="1 new today"
-            status={overallData.alertCount > 0 ? "warning" : "normal"}
-            importance="primary"
-            animationDelay={300}
-          />
-        </div>
-      </div>
-
-      {/* Client Selection Section */}
+      {/* Client Selection Section - Moved to top */}
       <div className="flex flex-col gap-4 pb-2 border-b border-gas-neutral-200 dark:border-gas-neutral-700">
         <h2 className="text-xl font-semibold">Client Gas Usage</h2>
         <div className="flex flex-col sm:flex-row gap-3">
@@ -228,7 +189,7 @@ const MonitoringDashboard = () => {
         </div>
       </div>
 
-      {/* Client Data or Selection Prompt */}
+      {/* Client Data or Selection Prompt - Moved up with client selection */}
       {selectedClient ? (
         <ClientOverview client={clientData!} timeRange={timeRange} />
       ) : (
@@ -240,6 +201,45 @@ const MonitoringDashboard = () => {
           </p>
         </div>
       )}
+
+      {/* Overall Information Section - Moved below client section */}
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Overall Gas Distribution</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+          <GasMetricCard
+            title="Gas Tank Balance"
+            value={overallData.tankBalance}
+            unit="m³"
+            icon={<Gauge size={isMobile ? 32 : 40} />}
+            trend="down"
+            trendValue="2.5% from yesterday"
+            status="normal"
+            importance="primary"
+            animationDelay={100}
+          />
+          <GasMetricCard
+            title="Total Gas Delivered"
+            value={overallData.totalGasDelivered}
+            unit="m³"
+            icon={<Truck size={isMobile ? 32 : 40} />}
+            trend="up"
+            trendValue="15% this month"
+            status="normal"
+            importance="primary"
+            animationDelay={200}
+          />
+          <GasMetricCard
+            title="Alert Count"
+            value={overallData.alertCount}
+            icon={<AlertTriangle size={isMobile ? 32 : 40} />}
+            trend="up"
+            trendValue="1 new today"
+            status={overallData.alertCount > 0 ? "warning" : "normal"}
+            importance="primary"
+            animationDelay={300}
+          />
+        </div>
+      </div>
     </div>
   );
 };
