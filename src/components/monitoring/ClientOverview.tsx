@@ -1,10 +1,12 @@
 
-import React from 'react';
-import { MapPin, Thermometer, Gauge, CreditCard, AlertTriangle, BarChart } from 'lucide-react';
+import React, { useState } from 'react';
+import { MapPin, Thermometer, Gauge, CreditCard, AlertTriangle, BarChart, ChevronDown, ChevronUp } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import GasMetricCard from '../dashboard/GasMetricCard';
 import ChartComponent from '../dashboard/ChartComponent';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button";
 
 interface ClientData {
   id: string;
@@ -35,6 +37,8 @@ interface ClientOverviewProps {
 
 const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) => {
   const isMobile = useIsMobile();
+  const [tempChartOpen, setTempChartOpen] = useState(false);
+  const [pressureChartOpen, setPressureChartOpen] = useState(false);
   
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -63,10 +67,10 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
         </CardContent>
       </Card>
 
-      {/* Consumption and Billing */}
+      {/* Consumption and metrics with collapsible charts */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         <GasMetricCard
-          title="Gas Consumption"
+          title="Gas Out"
           value={client.consumption[timeRange]}
           unit="m³"
           icon={<BarChart size={isMobile ? 32 : 40} />}
@@ -75,56 +79,110 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
           importance="primary"
           animationDelay={100}
         />
-        <GasMetricCard
-          title="Gas Temperature"
-          value={client.temperature.current}
-          unit="°C"
-          icon={<Thermometer size={isMobile ? 32 : 40} />}
-          trend="neutral"
-          trendValue="Stable"
-          status="normal"
-          importance="primary"
-          animationDelay={200}
-        />
-        <GasMetricCard
-          title="Gas Pressure"
-          value={client.pressure.current}
-          unit="hPa"
-          icon={<Gauge size={isMobile ? 32 : 40} />}
-          trend="neutral"
-          trendValue="Normal range"
-          status="normal"
-          importance="primary"
-          animationDelay={300}
-        />
-      </div>
-
-      {/* Charts for Temperature and Pressure */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        <ChartComponent
-          type="line"
-          data={client.temperature.history}
-          dataKey="value"
-          strokeColor="#FF6666"
-          fillColor="#FFF0F0"
-          height={isMobile ? 200 : 250}
-          title="Temperature Monitoring"
-          subtitle="24-hour trend"
-          yAxisFormatter={(value) => `${value}°C`}
-          showAnimations={true}
-        />
-        <ChartComponent
-          type="line"
-          data={client.pressure.history}
-          dataKey="value"
-          strokeColor="#9CA3AF"
-          fillColor="#F9FAFB"
-          height={isMobile ? 200 : 250}
-          title="Pressure Monitoring"
-          subtitle="24-hour trend"
-          yAxisFormatter={(value) => `${value} hPa`}
-          showAnimations={true}
-        />
+        
+        {/* Temperature with collapsible chart */}
+        <Collapsible 
+          open={tempChartOpen} 
+          onOpenChange={setTempChartOpen} 
+          className="col-span-1"
+        >
+          <GasMetricCard
+            title="Gas Temperature"
+            value={client.temperature.current}
+            unit="°C"
+            icon={<Thermometer size={isMobile ? 32 : 40} />}
+            trend="neutral"
+            trendValue="Stable"
+            status="normal"
+            importance="primary"
+            animationDelay={200}
+            className="mb-0"
+            suffix={
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-1 h-7 ml-auto">
+                  {tempChartOpen ? (
+                    <>
+                      <span className="text-xs">Collapse</span>
+                      <ChevronUp className="h-4 w-4" />
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-xs">Expand</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </CollapsibleTrigger>
+            }
+          />
+          
+          <CollapsibleContent className="mt-3">
+            <ChartComponent
+              type="line"
+              data={client.temperature.history}
+              dataKey="value"
+              strokeColor="#FF6666"
+              fillColor="#FFF0F0"
+              height={isMobile ? 180 : 220}
+              title="Temperature Monitoring"
+              subtitle="24-hour trend"
+              yAxisFormatter={(value) => `${value}°C`}
+              showAnimations={true}
+            />
+          </CollapsibleContent>
+        </Collapsible>
+        
+        {/* Pressure with collapsible chart */}
+        <Collapsible 
+          open={pressureChartOpen} 
+          onOpenChange={setPressureChartOpen}
+          className="col-span-1"
+        >
+          <GasMetricCard
+            title="Gas Pressure"
+            value={client.pressure.current}
+            unit="hPa"
+            icon={<Gauge size={isMobile ? 32 : 40} />}
+            trend="neutral"
+            trendValue="Normal range"
+            status="normal"
+            importance="primary"
+            animationDelay={300}
+            className="mb-0"
+            suffix={
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-1 h-7 ml-auto">
+                  {pressureChartOpen ? (
+                    <>
+                      <span className="text-xs">Collapse</span>
+                      <ChevronUp className="h-4 w-4" />
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-xs">Expand</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </CollapsibleTrigger>
+            }
+          />
+          
+          <CollapsibleContent className="mt-3">
+            <ChartComponent
+              type="line"
+              data={client.pressure.history}
+              dataKey="value"
+              strokeColor="#9CA3AF"
+              fillColor="#F9FAFB"
+              height={isMobile ? 180 : 220}
+              title="Pressure Monitoring"
+              subtitle="24-hour trend"
+              yAxisFormatter={(value) => `${value} hPa`}
+              showAnimations={true}
+            />
+          </CollapsibleContent>
+        </Collapsible>
       </div>
 
       {/* Billing and Alerts */}

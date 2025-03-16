@@ -22,6 +22,7 @@ interface GasMetricCardProps {
   className?: string;
   animated?: boolean;
   animationDelay?: number;
+  suffix?: React.ReactNode;
 }
 
 export const GasMetricCard = ({
@@ -37,6 +38,7 @@ export const GasMetricCard = ({
   className,
   animated = true,
   animationDelay = 0,
+  suffix,
 }: GasMetricCardProps) => {
   const importanceClasses = {
     primary: 'shadow-card',
@@ -74,9 +76,13 @@ export const GasMetricCard = ({
         <h3 className="text-sm font-medium text-gas-neutral-500">{title}</h3>
         <div className="flex items-center gap-2">
           {status && <StatusIndicator status={status} size="sm" />}
-          <button className="text-gas-neutral-400 hover:text-gas-neutral-900 dark:hover:text-gas-neutral-100 transition-colors">
-            <MoreHorizontal size={18} />
-          </button>
+          {suffix ? (
+            suffix
+          ) : (
+            <button className="text-gas-neutral-400 hover:text-gas-neutral-900 dark:hover:text-gas-neutral-100 transition-colors">
+              <MoreHorizontal size={18} />
+            </button>
+          )}
         </div>
       </div>
       
