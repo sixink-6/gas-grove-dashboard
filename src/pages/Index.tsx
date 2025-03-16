@@ -43,7 +43,7 @@ const Index = () => {
       
       <div className={`transition-all duration-300 ease-in-out ${isMobile ? 'pl-0' : 'pl-64'}`}>
         <Header 
-          title="Gas Monitoring Dashboard" 
+          title="Gas Out Dashboard" 
           subtitle="Track gas distribution and client usage"
         />
         
