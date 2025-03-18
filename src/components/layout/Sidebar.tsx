@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -48,14 +47,12 @@ export const Sidebar = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
-  // Close mobile menu when screen resizes to desktop
   useEffect(() => {
     if (!isMobile && mobileMenuOpen) {
       setMobileMenuOpen(false);
     }
   }, [isMobile, mobileMenuOpen]);
 
-  // Get current path to determine active menu item
   const currentPath = window.location.pathname;
 
   const mainMenuItems: SidebarItem[] = [
@@ -63,7 +60,7 @@ export const Sidebar = () => {
     { label: 'Alerting', icon: Bell, path: '/alerting', active: currentPath === '/alerting' },
     { label: 'Reporting', icon: FileText, path: '/reporting', active: currentPath === '/reporting' },
     { label: 'Payment & Billing', icon: CreditCard, path: '/billing', active: currentPath === '/billing' },
-    { label: 'Settings', icon: Settings, path: '/settings', active: currentPath === '/settings' },
+    { label: 'User Management', icon: Settings, path: '/settings', active: currentPath === '/settings' },
   ];
 
   const handleChangePassword = () => {
@@ -78,7 +75,6 @@ export const Sidebar = () => {
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
-    // In a real application, this would clear session/auth state
     navigate('/');
   };
 
@@ -100,7 +96,6 @@ export const Sidebar = () => {
     </Link>
   );
 
-  // Mobile hamburger menu button
   const mobileMenuButton = isMobile && (
     <button 
       onClick={toggleMobileMenu}
@@ -110,7 +105,6 @@ export const Sidebar = () => {
     </button>
   );
 
-  // User profile with settings dropdown
   const userProfileSection = (
     <div className="p-4 border-t border-gas-neutral-100 dark:border-gas-neutral-800">
       <DropdownMenu>
@@ -152,13 +146,11 @@ export const Sidebar = () => {
     </div>
   );
 
-  // Mobile sidebar
   if (isMobile) {
     return (
       <>
         {mobileMenuButton}
         
-        {/* Mobile sidebar that slides in from left */}
         <div 
           className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ${
             mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
@@ -193,7 +185,6 @@ export const Sidebar = () => {
     );
   }
 
-  // Desktop sidebar
   return (
     <GlassMorphism
       intensity="medium"
