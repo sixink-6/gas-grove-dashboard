@@ -5,12 +5,27 @@ import { format } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import ReportDateRangePicker from './ReportDateRangePicker';
 import ConsumptionTrendsChart from './ConsumptionTrendsChart';
 import ClientDistributionChart from './ClientDistributionChart';
 import ConsumptionTable from './ConsumptionTable';
 
 type ReportType = 'consumption' | 'delivery' | 'efficiency';
+
+// Sample client data - in a real app, this would come from an API
+const clients = [
+  { id: 'all', name: 'All Clients' },
+  { id: 'company-alpha', name: 'Company Alpha' },
+  { id: 'acme-industries', name: 'Acme Industries' },
+  { id: 'western-manufacturing', name: 'Western Manufacturing' },
+];
 
 const ReportingDashboard = () => {
   const [dateRange, setDateRange] = useState<{
@@ -24,6 +39,7 @@ const ReportingDashboard = () => {
   const [reportType, setReportType] = useState<ReportType>('consumption');
   const [viewMode, setViewMode] = useState<'chart' | 'table'>('chart');
   const [chartType, setChartType] = useState<'line' | 'bar' | 'pie'>('line');
+  const [selectedClient, setSelectedClient] = useState<string>('all');
   
   const handleExportPDF = () => {
     // This would be implemented with a PDF generation library
@@ -37,6 +53,48 @@ const ReportingDashboard = () => {
   
   const handlePrint = () => {
     window.print();
+  };
+  
+  // Calculate total consumption based on selected client
+  const getTotalConsumption = () => {
+    if (selectedClient === 'all') {
+      return '12,450 m³';
+    } else if (selectedClient === 'company-alpha') {
+      return '3,750 m³';
+    } else if (selectedClient === 'acme-industries') {
+      return '2,610 m³';
+    } else if (selectedClient === 'western-manufacturing') {
+      return '4,350 m³';
+    }
+    return '12,450 m³';
+  };
+  
+  // Calculate average daily usage based on selected client
+  const getAverageDailyUsage = () => {
+    if (selectedClient === 'all') {
+      return '415 m³';
+    } else if (selectedClient === 'company-alpha') {
+      return '125 m³';
+    } else if (selectedClient === 'acme-industries') {
+      return '87 m³';
+    } else if (selectedClient === 'western-manufacturing') {
+      return '145 m³';
+    }
+    return '415 m³';
+  };
+  
+  // Calculate total billing based on selected client
+  const getTotalBilling = () => {
+    if (selectedClient === 'all') {
+      return '$3,750';
+    } else if (selectedClient === 'company-alpha') {
+      return '$1,250';
+    } else if (selectedClient === 'acme-industries') {
+      return '$870';
+    } else if (selectedClient === 'western-manufacturing') {
+      return '$1,450';
+    }
+    return '$3,750';
   };
   
   return (
@@ -67,11 +125,29 @@ const ReportingDashboard = () => {
       </div>
       
       {/* Filters Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="col-span-1">
           <CardContent className="p-4">
             <h3 className="text-sm font-medium mb-4">Report Period</h3>
             <ReportDateRangePicker dateRange={dateRange} setDateRange={setDateRange} />
+          </CardContent>
+        </Card>
+        
+        <Card className="col-span-1">
+          <CardContent className="p-4">
+            <h3 className="text-sm font-medium mb-4">Client</h3>
+            <Select value={selectedClient} onValueChange={setSelectedClient}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select client" />
+              </SelectTrigger>
+              <SelectContent>
+                {clients.map((client) => (
+                  <SelectItem key={client.id} value={client.id}>
+                    {client.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </CardContent>
         </Card>
         
@@ -147,7 +223,7 @@ const ReportingDashboard = () => {
         <Card>
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
             <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Consumption</h3>
-            <p className="text-3xl font-bold">12,450 m³</p>
+            <p className="text-3xl font-bold">{getTotalConsumption()}</p>
             <p className="text-sm text-muted-foreground mt-2">
               <span className="text-green-500">↑ 15.2%</span> from previous period
             </p>
@@ -157,7 +233,7 @@ const ReportingDashboard = () => {
         <Card>
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
             <h3 className="text-sm font-medium text-muted-foreground mb-2">Average Daily Usage</h3>
-            <p className="text-3xl font-bold">415 m³</p>
+            <p className="text-3xl font-bold">{getAverageDailyUsage()}</p>
             <p className="text-sm text-muted-foreground mt-2">
               <span className="text-green-500">↑ 3.8%</span> from previous period
             </p>
@@ -167,7 +243,7 @@ const ReportingDashboard = () => {
         <Card>
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
             <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Billing</h3>
-            <p className="text-3xl font-bold">$3,750</p>
+            <p className="text-3xl font-bold">{getTotalBilling()}</p>
             <p className="text-sm text-muted-foreground mt-2">
               {format(dateRange.from, 'd MMM')} - {format(dateRange.to, 'd MMM yyyy')}
             </p>
@@ -187,14 +263,19 @@ const ReportingDashboard = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ConsumptionTrendsChart 
               chartType={chartType} 
-              dateRange={dateRange} 
+              dateRange={dateRange}
+              selectedClient={selectedClient}
             />
             <ClientDistributionChart 
               chartType={chartType}
+              selectedClient={selectedClient} 
             />
           </div>
         ) : (
-          <ConsumptionTable dateRange={dateRange} />
+          <ConsumptionTable 
+            dateRange={dateRange} 
+            selectedClient={selectedClient}
+          />
         )}
       </div>
     </div>

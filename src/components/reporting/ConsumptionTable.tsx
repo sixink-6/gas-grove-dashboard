@@ -15,25 +15,31 @@ interface ConsumptionTableProps {
     from: Date;
     to: Date;
   };
+  selectedClient?: string;
 }
 
 // Generate sample data - in a real app, this would come from an API
-const generateTableData = (from: Date, to: Date) => {
+const generateTableData = (from: Date, to: Date, selectedClient: string) => {
   const data = [];
   const days = Math.min(30, Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24)));
   const startDate = new Date(from);
   
   const clients = [
-    { name: 'Company Alpha', meterId: 'GM-NY-001' },
-    { name: 'Acme Industries', meterId: 'GM-CHI-002' },
-    { name: 'Western Manufacturing', meterId: 'GM-LA-003' },
+    { id: 'company-alpha', name: 'Company Alpha', meterId: 'GM-NY-001' },
+    { id: 'acme-industries', name: 'Acme Industries', meterId: 'GM-CHI-002' },
+    { id: 'western-manufacturing', name: 'Western Manufacturing', meterId: 'GM-LA-003' },
   ];
+  
+  // Filter clients based on selection
+  const filteredClients = selectedClient === 'all' 
+    ? clients 
+    : clients.filter(client => client.id === selectedClient);
   
   for (let i = 0; i < days; i++) {
     const date = new Date(startDate);
     date.setDate(date.getDate() + i);
     
-    for (const client of clients) {
+    for (const client of filteredClients) {
       data.push({
         date: date.toISOString().split('T')[0],
         client: client.name,
@@ -47,8 +53,8 @@ const generateTableData = (from: Date, to: Date) => {
   return data;
 };
 
-const ConsumptionTable = ({ dateRange }: ConsumptionTableProps) => {
-  const data = generateTableData(dateRange.from, dateRange.to);
+const ConsumptionTable = ({ dateRange, selectedClient = 'all' }: ConsumptionTableProps) => {
+  const data = generateTableData(dateRange.from, dateRange.to, selectedClient);
   
   return (
     <Card>

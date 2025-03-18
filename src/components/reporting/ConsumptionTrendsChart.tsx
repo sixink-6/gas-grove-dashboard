@@ -41,10 +41,20 @@ interface ConsumptionTrendsChartProps {
     from: Date;
     to: Date;
   };
+  selectedClient?: string;
 }
 
-const ConsumptionTrendsChart = ({ chartType, dateRange }: ConsumptionTrendsChartProps) => {
+const ConsumptionTrendsChart = ({ chartType, dateRange, selectedClient = 'all' }: ConsumptionTrendsChartProps) => {
   const data = generateData(dateRange.from, dateRange.to);
+  
+  // Function to determine which lines/bars to display based on selectedClient
+  const shouldShowClient = (clientName: string) => {
+    if (selectedClient === 'all') return true;
+    if (selectedClient === 'company-alpha' && clientName === 'Company Alpha') return true;
+    if (selectedClient === 'acme-industries' && clientName === 'Acme Industries') return true;
+    if (selectedClient === 'western-manufacturing' && clientName === 'Western Manufacturing') return true;
+    return false;
+  };
   
   return (
     <Card>
@@ -64,22 +74,28 @@ const ConsumptionTrendsChart = ({ chartType, dateRange }: ConsumptionTrendsChart
                 <YAxis unit=" m³" />
                 <Tooltip />
                 <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="Company Alpha" 
-                  stroke="#8884d8" 
-                  activeDot={{ r: 8 }} 
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="Acme Industries" 
-                  stroke="#82ca9d" 
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="Western Manufacturing" 
-                  stroke="#ffc658" 
-                />
+                {shouldShowClient('Company Alpha') && (
+                  <Line 
+                    type="monotone" 
+                    dataKey="Company Alpha" 
+                    stroke="#8884d8" 
+                    activeDot={{ r: 8 }} 
+                  />
+                )}
+                {shouldShowClient('Acme Industries') && (
+                  <Line 
+                    type="monotone" 
+                    dataKey="Acme Industries" 
+                    stroke="#82ca9d" 
+                  />
+                )}
+                {shouldShowClient('Western Manufacturing') && (
+                  <Line 
+                    type="monotone" 
+                    dataKey="Western Manufacturing" 
+                    stroke="#ffc658" 
+                  />
+                )}
               </LineChart>
             ) : (
               <BarChart
@@ -91,9 +107,15 @@ const ConsumptionTrendsChart = ({ chartType, dateRange }: ConsumptionTrendsChart
                 <YAxis unit=" m³" />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="Company Alpha" fill="#8884d8" />
-                <Bar dataKey="Acme Industries" fill="#82ca9d" />
-                <Bar dataKey="Western Manufacturing" fill="#ffc658" />
+                {shouldShowClient('Company Alpha') && (
+                  <Bar dataKey="Company Alpha" fill="#8884d8" />
+                )}
+                {shouldShowClient('Acme Industries') && (
+                  <Bar dataKey="Acme Industries" fill="#82ca9d" />
+                )}
+                {shouldShowClient('Western Manufacturing') && (
+                  <Bar dataKey="Western Manufacturing" fill="#ffc658" />
+                )}
               </BarChart>
             )}
           </ResponsiveContainer>

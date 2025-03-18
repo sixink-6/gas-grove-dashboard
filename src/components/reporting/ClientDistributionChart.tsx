@@ -11,7 +11,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 // Sample data - in a real app, this would come from an API
-const data = [
+const allClientsData = [
   { name: 'Company Alpha', value: 3750 },
   { name: 'Acme Industries', value: 2610 },
   { name: 'Western Manufacturing', value: 4350 },
@@ -21,9 +21,26 @@ const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042'];
 
 interface ClientDistributionChartProps {
   chartType: 'line' | 'bar' | 'pie';
+  selectedClient?: string;
 }
 
-const ClientDistributionChart = ({ chartType }: ClientDistributionChartProps) => {
+const ClientDistributionChart = ({ chartType, selectedClient = 'all' }: ClientDistributionChartProps) => {
+  // Filter data based on selectedClient
+  const getFilteredData = () => {
+    if (selectedClient === 'all') {
+      return allClientsData;
+    } else if (selectedClient === 'company-alpha') {
+      return allClientsData.filter(client => client.name === 'Company Alpha');
+    } else if (selectedClient === 'acme-industries') {
+      return allClientsData.filter(client => client.name === 'Acme Industries');
+    } else if (selectedClient === 'western-manufacturing') {
+      return allClientsData.filter(client => client.name === 'Western Manufacturing');
+    }
+    return allClientsData;
+  };
+  
+  const data = getFilteredData();
+  
   return (
     <Card>
       <CardHeader className="pb-2">
