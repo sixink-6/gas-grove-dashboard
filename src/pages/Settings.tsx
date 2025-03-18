@@ -18,8 +18,8 @@ const Settings = () => {
       
       <div className={`transition-all duration-300 ease-in-out ${isMobile ? 'pl-0' : 'pl-64'}`}>
         <Header 
-          title="Settings" 
-          subtitle="Configure system settings and user access"
+          title="User Management" 
+          subtitle="Manage user accounts and access"
         />
         
         <main className="container mx-auto p-2 sm:p-4 animate-fade-in">

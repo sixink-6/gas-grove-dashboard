@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Home,
   Bell,
@@ -10,11 +11,21 @@ import {
   Menu,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  LogOut,
+  KeyRound
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import GlassMorphism from '../ui/GlassMorphism';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
+import { toast } from '@/hooks/use-toast';
 
 type SidebarItem = {
   label: string;
@@ -27,6 +38,7 @@ export const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -54,6 +66,22 @@ export const Sidebar = () => {
     { label: 'Settings', icon: Settings, path: '/settings', active: currentPath === '/settings' },
   ];
 
+  const handleChangePassword = () => {
+    toast({
+      title: "Change Password",
+      description: "Password change functionality will be implemented soon.",
+    });
+  };
+
+  const handleLogout = () => {
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+    // In a real application, this would clear session/auth state
+    navigate('/');
+  };
+
   const renderMenuItem = (item: SidebarItem) => (
     <Link
       key={item.label}
@@ -80,6 +108,48 @@ export const Sidebar = () => {
     >
       {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
     </button>
+  );
+
+  // User profile with settings dropdown
+  const userProfileSection = (
+    <div className="p-4 border-t border-gas-neutral-100 dark:border-gas-neutral-800">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <div className={cn(
+            "flex items-center gap-3 cursor-pointer rounded-lg hover:bg-gas-neutral-100 dark:hover:bg-gas-neutral-700 p-1",
+            collapsed && !isMobile && "justify-center"
+          )}>
+            <div className="h-8 w-8 rounded-full bg-gas-neutral-200 dark:bg-gas-neutral-700 flex items-center justify-center">
+              <User size={16} className="text-gas-neutral-600 dark:text-gas-neutral-300" />
+            </div>
+            {(!collapsed || isMobile) && (
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gas-neutral-900 dark:text-white truncate">
+                  John Doe
+                </p>
+                <p className="text-xs text-gas-neutral-500 truncate">
+                  Administrator
+                </p>
+              </div>
+            )}
+            {(!collapsed || isMobile) && (
+              <Settings size={16} className="text-gas-neutral-500" />
+            )}
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuItem onClick={handleChangePassword} className="cursor-pointer">
+            <KeyRound className="mr-2 h-4 w-4" />
+            <span>Change Password</span>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500 focus:text-red-500">
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Logout</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 
   // Mobile sidebar
@@ -117,21 +187,7 @@ export const Sidebar = () => {
             <nav className="space-y-1">{mainMenuItems.map(renderMenuItem)}</nav>
           </div>
 
-          <div className="p-4 border-t border-gas-neutral-100 dark:border-gas-neutral-800">
-            <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-full bg-gas-neutral-200 dark:bg-gas-neutral-700 flex items-center justify-center">
-                <User size={16} className="text-gas-neutral-600 dark:text-gas-neutral-300" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gas-neutral-900 dark:text-white truncate">
-                  John Doe
-                </p>
-                <p className="text-xs text-gas-neutral-500 truncate">
-                  Administrator
-                </p>
-              </div>
-            </div>
-          </div>
+          {userProfileSection}
         </GlassMorphism>
       </>
     );
@@ -176,23 +232,7 @@ export const Sidebar = () => {
         <nav className="space-y-1">{mainMenuItems.map(renderMenuItem)}</nav>
       </div>
 
-      <div className="p-4 border-t border-gas-neutral-100 dark:border-gas-neutral-800">
-        <div className={cn("flex items-center gap-3", collapsed && "justify-center")}>
-          <div className="h-8 w-8 rounded-full bg-gas-neutral-200 dark:bg-gas-neutral-700 flex items-center justify-center">
-            <User size={16} className="text-gas-neutral-600 dark:text-gas-neutral-300" />
-          </div>
-          {!collapsed && (
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gas-neutral-900 dark:text-white truncate">
-                John Doe
-              </p>
-              <p className="text-xs text-gas-neutral-500 truncate">
-                Administrator
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+      {userProfileSection}
     </GlassMorphism>
   );
 };
