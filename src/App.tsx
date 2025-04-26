@@ -11,6 +11,7 @@ import Settings from "./pages/Settings";
 import RoleManagement from "./pages/RoleManagement";
 import UserManagement from "./pages/UserManagement";
 import Reporting from "./pages/Reporting";
+import OrderManagement from "./pages/OrderManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/alerting" element={<Alerting />} />
           <Route path="/billing" element={<Billing />} />
           <Route path="/reporting" element={<Reporting />} />
+          <Route path="/order-management" element={<OrderManagement />} />
           <Route path="/settings" element={<Settings />}>
             <Route path="/settings" element={<RoleManagement />} />
             <Route path="/settings/role-management" element={<RoleManagement />} />

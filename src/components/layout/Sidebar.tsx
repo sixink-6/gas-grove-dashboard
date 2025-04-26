@@ -12,7 +12,8 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
-  KeyRound
+  KeyRound,
+  Package
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import GlassMorphism from '../ui/GlassMorphism';
@@ -59,6 +60,7 @@ export const Sidebar = () => {
     { label: 'Dashboard', icon: Home, path: '/', active: currentPath === '/' },
     { label: 'Alerting', icon: Bell, path: '/alerting', active: currentPath === '/alerting' },
     { label: 'Reporting', icon: FileText, path: '/reporting', active: currentPath === '/reporting' },
+    { label: 'Order Management', icon: Package, path: '/order-management', active: currentPath === '/order-management' },
     { label: 'Payment & Billing', icon: CreditCard, path: '/billing', active: currentPath === '/billing' },
     { label: 'User Management', icon: Settings, path: '/settings', active: currentPath === '/settings' },
   ];
