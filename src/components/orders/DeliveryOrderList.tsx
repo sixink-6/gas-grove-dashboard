@@ -1,19 +1,17 @@
-
 import React, { useState } from 'react';
-import { FileText, Search, CheckCircle } from 'lucide-react';
+import { FileText, Search, CheckCircle, Upload } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { toast } from '@/hooks/use-toast';
 
-// Sample delivery orders based on approved purchase orders
 const sampleDeliveryOrders = [
   {
     id: 'DO-2025-001',
@@ -43,12 +41,24 @@ const sampleDeliveryOrders = [
   }
 ];
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
 const verificationSchema = z.object({
   driverName: z.string().min(2, { message: "Driver name is required" }),
   driverPhone: z.string().min(5, { message: "Driver phone is required" }),
   receiverName: z.string().min(2, { message: "Receiver name is required" }),
   receiverPhone: z.string().min(5, { message: "Receiver phone is required" }),
-  notes: z.string().optional()
+  notes: z.string().optional(),
+  deliveryImages: z
+    .custom<FileList>()
+    .refine((files) => files?.length >= 1, "At least one delivery image is required")
+    .refine((files) => {
+      return files?.length > 0 ? files[0].size <= MAX_FILE_SIZE : true;
+    }, "Max image size is 5MB")
+    .refine((files) => {
+      return files?.length > 0 ? ACCEPTED_IMAGE_TYPES.includes(files[0].type) : true;
+    }, "Only .jpg, .jpeg, .png and .webp formats are supported")
 });
 
 type VerificationFormValues = z.infer<typeof verificationSchema>;
@@ -78,32 +88,40 @@ const DeliveryOrderList = () => {
   );
 
   const handleVerifyDelivery = (data: VerificationFormValues) => {
-    // Update the delivery order status
-    const updatedOrders = deliveryOrders.map(order => 
-      order.id === selectedOrder.id 
-        ? { 
-            ...order, 
-            status: 'delivered',
-            verifiedBy: {
-              driver: { name: data.driverName, phone: data.driverPhone },
-              receiver: { name: data.receiverName, phone: data.receiverPhone },
-              notes: data.notes,
-              timestamp: new Date().toISOString()
-            }
-          } 
-        : order
-    );
-    setDeliveryOrders(updatedOrders);
-    setIsVerifyModalOpen(false);
-    setSelectedOrder(null);
+    const file = data.deliveryImages[0];
+    const reader = new FileReader();
     
-    toast({
-      title: "Delivery Verified",
-      description: `${selectedOrder.id} has been successfully verified and marked as delivered.`
-    });
+    reader.onload = (e) => {
+      const updatedOrders = deliveryOrders.map(order => 
+        order.id === selectedOrder.id 
+          ? { 
+              ...order, 
+              status: 'delivered',
+              verifiedBy: {
+                driver: { name: data.driverName, phone: data.driverPhone },
+                receiver: { name: data.receiverName, phone: data.receiverPhone },
+                notes: data.notes,
+                deliveryImage: e.target?.result,
+                timestamp: new Date().toISOString()
+              }
+            } 
+          : order
+      );
+      setDeliveryOrders(updatedOrders);
+      setIsVerifyModalOpen(false);
+      setSelectedOrder(null);
+      
+      toast({
+        title: "Delivery Verified",
+        description: `${selectedOrder.id} has been successfully verified and marked as delivered.`
+      });
 
-    // Reset form
-    form.reset();
+      form.reset();
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
   };
 
   const openVerifyModal = (order) => {
@@ -202,11 +220,13 @@ const DeliveryOrderList = () => {
         </CardContent>
       </Card>
 
-      {/* Delivery Verification Modal */}
       <Dialog open={isVerifyModalOpen} onOpenChange={setIsVerifyModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Verify Delivery</DialogTitle>
+            <DialogDescription>
+              Please fill in the verification details and upload a delivery proof image.
+            </DialogDescription>
           </DialogHeader>
           
           {selectedOrder && (
@@ -300,6 +320,42 @@ const DeliveryOrderList = () => {
                     <FormLabel>Delivery Notes</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Any comments about the delivery..." />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="deliveryImages"
+                render={({ field: { onChange, ...field } }) => (
+                  <FormItem>
+                    <FormLabel>Delivery Proof Image</FormLabel>
+                    <FormControl>
+                      <div className="flex items-center justify-center w-full">
+                        <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                            <Upload className="w-8 h-8 mb-2 text-gray-500" />
+                            <p className="mb-2 text-sm text-gray-500">
+                              <span className="font-semibold">Click to upload</span> or drag and drop
+                            </p>
+                            <p className="text-xs text-gray-500">PNG, JPG, WEBP (MAX. 5MB)</p>
+                          </div>
+                          <input
+                            {...field}
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const files = e.target.files;
+                              if (files?.length) {
+                                onChange(files);
+                              }
+                            }}
+                          />
+                        </label>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
