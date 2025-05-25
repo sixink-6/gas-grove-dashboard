@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MapPin, Thermometer, Gauge, CreditCard, AlertTriangle, BarChart, ChevronDown, ChevronUp, Factory } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -9,6 +8,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Button } from "@/components/ui/button";
 import { format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface MeterData {
   id: string;
@@ -56,6 +56,7 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
   const [tempChartOpen, setTempChartOpen] = useState(false);
   const [pressureChartOpen, setPressureChartOpen] = useState(false);
   const [selectedMeter, setSelectedMeter] = useState<string>(client.meters[0]?.id || '');
+  const [pressureMeterFilter, setPressureMeterFilter] = useState<string>(client.meters[0]?.id || '');
   
   // Default billing period if not provided
   const billingPeriod = client.billingPeriod || {
@@ -66,6 +67,8 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
   const formattedBillingPeriod = `${format(billingPeriod.from, 'd MMM')} - ${format(billingPeriod.to, 'd MMM yyyy')}`;
   
   const currentMeter = client.meters.find(meter => meter.id === selectedMeter) || client.meters[0];
+  
+  const pressureFilterMeter = client.meters.find(meter => meter.id === pressureMeterFilter) || client.meters[0];
   
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -84,6 +87,9 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
               <div>
                 <span className="text-xs text-gas-neutral-500">Meters</span>
                 <p className="font-medium text-xs sm:text-sm">{client.meters.length} active meters</p>
+                <div className="text-xs text-gas-neutral-400 mt-1">
+                  Meter IDs: {client.meters.map(m => m.id).join(', ')}
+                </div>
               </div>
               <div>
                 <span className="text-xs text-gas-neutral-500">Alerts</span>
@@ -181,7 +187,7 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
           </CollapsibleContent>
         </Collapsible>
         
-        {/* Pressure with collapsible chart */}
+        {/* Pressure with collapsible chart and meter filter */}
         <Collapsible 
           open={pressureChartOpen} 
           onOpenChange={setPressureChartOpen}
@@ -189,7 +195,7 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
         >
           <GasMetricCard
             title="Gas Pressure"
-            value={currentMeter.pressure.current}
+            value={pressureFilterMeter.pressure.current}
             unit="Barg"
             icon={<Gauge size={isMobile ? 32 : 40} />}
             trend="neutral"
@@ -218,14 +224,31 @@ const ClientOverview: React.FC<ClientOverviewProps> = ({ client, timeRange }) =>
           />
           
           <CollapsibleContent className="mt-3">
+            {client.meters.length > 1 && (
+              <div className="mb-3">
+                <label className="text-xs text-gas-neutral-500 mb-1 block">Filter by Meter ID</label>
+                <Select value={pressureMeterFilter} onValueChange={setPressureMeterFilter}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {client.meters.map(meter => (
+                      <SelectItem key={meter.id} value={meter.id}>
+                        {meter.id} - {meter.location}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <ChartComponent
               type="line"
-              data={currentMeter.pressure.history}
+              data={pressureFilterMeter.pressure.history}
               dataKey="value"
               strokeColor="#9CA3AF"
               fillColor="#F9FAFB"
               height={isMobile ? 180 : 220}
-              title={`Pressure - ${currentMeter.id}`}
+              title={`Pressure - ${pressureFilterMeter.id}`}
               subtitle="24-hour trend"
               yAxisFormatter={(value) => `${value} Barg`}
               showAnimations={true}

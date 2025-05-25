@@ -329,7 +329,7 @@ const DeliveryOrderList = () => {
               <FormField
                 control={form.control}
                 name="deliveryImages"
-                render={({ field: { onChange, ...field } }) => (
+                render={({ field: { value, onChange, ...field } }) => (
                   <FormItem>
                     <FormLabel>Delivery Proof Image</FormLabel>
                     <FormControl>
